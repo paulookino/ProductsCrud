@@ -1,0 +1,57 @@
+
+User Story: As a Store Manager, I want to manage products in an inventory system to keep track of available items.
+
+Story 1: Authentication and Authorization
+Acceptance Criteria:
+
+As a user, I can register for an account using my email and password.
+As a registered user, I can log in using my credentials.
+Only authenticated users can access the product management system.
+Store Managers have full CRUD (Create, Read, Update, Delete) access to products.
+
+
+Story 2: Product Creation
+Acceptance Criteria:
+
+As a Store Manager, I can add a new product to the inventory.
+Each product has a name, price, stock quantity, and other relevant information.
+The product creation form includes validation to ensure accurate data entry.
+After successful creation, the new product is added to the product list.
+
+Story 3: Product Viewing
+Acceptance Criteria:
+
+As a Store Manager, I can view a list of all products in the inventory.
+Each product in the list displays its name, price, and current stock quantity.
+As an Employee, I can also view the list but without edit or delete options.
+
+Story 4: Product Editing
+Acceptance Criteria:
+
+As a Store Manager, I can edit the details of an existing product.
+The edit form displays the current details of the product.
+Changes made to the product details are updated in the system.
+Validation prevents incorrect data entry.
+
+Story 5: Product Deletion
+Acceptance Criteria:
+
+I can delete a product from the inventory.
+A confirmation prompt appears before the deletion is finalized.
+Once confirmed, the product is removed from the system.
+
+Story 6: Authorization Handling
+Acceptance Criteria:
+
+Unauthorized users attempting to access the product management system are redirected to the login page.
+Unauthorized users attempting CRUD operations receive appropriate error messages.
+Unauthorized attempts to perform CRUD operations through direct URLs are blocked.
+The system maintains security logs for unauthorized access attempts.
+
+Definition of Done:
+Code is written and reviewed.
+Unit tests are created and passed successfully.
+User interface is responsive and follows design specifications.
+Authorization checks are implemented for all CRUD operations.
+Documentation is updated.
+The feature is successfully integrated into the main branch.
