@@ -17,11 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Business", "Business\Business.csproj", "{789DCBFC-4508-46E2-968E-A78EF7094229}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Data", "Tests.Data\Tests.Data.csproj", "{9B4845E1-7285-4855-9B04-70A711AAC21F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Data", "Tests.Data\Tests.Data.csproj", "{9B4845E1-7285-4855-9B04-70A711AAC21F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Business", "Tests.Business\Tests.Business.csproj", "{5E056292-4060-4191-8C62-4B2FA88E162E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Business", "Tests.Business\Tests.Business.csproj", "{5E056292-4060-4191-8C62-4B2FA88E162E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testes.ProductsCrud", "Testes.ProductsCrud\Testes.ProductsCrud.csproj", "{B440B6C5-8735-4D02-864F-13005163B5E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.ProductsCrud", "Testes.ProductsCrud\Tests.ProductsCrud.csproj", "{B440B6C5-8735-4D02-864F-13005163B5E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
