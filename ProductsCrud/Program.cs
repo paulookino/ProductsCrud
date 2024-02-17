@@ -2,17 +2,15 @@ using Business.Interfaces.Repositories;
 using Business.Interfaces.Services;
 using Business.Services;
 using Data.Repositories;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
-
+string suaConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
-
-string suaConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddScoped<IProductRepository>(provider => new ProductRepository(suaConnectionString));
+builder.Services.AddScoped<IUserRepository>(provider => new UserRepository(suaConnectionString));
 
 builder.Services.AddControllersWithViews();
 
@@ -21,33 +19,13 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30);
 });
 
-var key = new byte[32]; 
-using (var rng = new System.Security.Cryptography.RNGCryptoServiceProvider())
-{
-    rng.GetBytes(key);
-}
-
-var securityKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(key);
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+builder.Services
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie((options) =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = "issuer",
-            ValidAudience = "audience",
-            IssuerSigningKey = securityKey,
-            ClockSkew = TimeSpan.Zero
-        };
+        options.LoginPath = "/User/Login";
     });
 
-
-builder.Services.AddScoped<IProductRepository>(provider => new ProductRepository(suaConnectionString));
-builder.Services.AddScoped<IUserRepository>(provider => new UserRepository(suaConnectionString));
 
 var app = builder.Build();
 
@@ -65,7 +43,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
@@ -74,14 +55,5 @@ app.UseEndpoints(endpoints =>
 });
 
 app.UseSession();
-app.UseAuthentication();
-app.Use(async (context, next) =>
-{
-    var JWToken = context.Session.GetString("JWToken");
-    if (!string.IsNullOrEmpty(JWToken))
-    {
-        context.Request.Headers.Add("Authorization", "Bearer " + JWToken);
-    }
-    await next();
-});
+
 app.Run();

@@ -1,13 +1,10 @@
 ﻿using Business.Interfaces.Services;
 using Business.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 
 namespace ProductsCrud.Controllers
 {
@@ -32,7 +29,7 @@ namespace ProductsCrud.Controllers
             if (ModelState.IsValid)
             {
                 _userService.CreateUser(user);
-                GenerateJwtToken(user.Username);
+                Auth(user.Username);
                 return RedirectToAction("Index", "Product");
             }
 
@@ -49,7 +46,7 @@ namespace ProductsCrud.Controllers
         {
             if (_userService.ValidateUser(user))
             {
-                GenerateJwtToken(user.Username);
+                Auth(user.Username);
                 return RedirectToAction("Index", "Product");
             }
 
@@ -57,23 +54,24 @@ namespace ProductsCrud.Controllers
             return View(user);
         }
 
-        private void GenerateJwtToken(string username)
+        private void Auth(string username)
         {
-            var claims = new[]
-             {
-                new Claim(ClaimTypes.Name, username),
-            };
+            List<Claim> claims =
+            [
+                new Claim(ClaimTypes.NameIdentifier, username),
+                new Claim(ClaimTypes.Name, username)
+            ];
+            var authScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 
-            var token = new JwtSecurityToken(
-                issuer: "issuer",
-                audience: "audience",
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(30),
-                signingCredentials: new SigningCredentials(new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("this is my custom Secret key for authentication")), SecurityAlgorithms.HmacSha256)
-                
-            );
-            var JWToken = new JwtSecurityTokenHandler().WriteToken(token);
-            //HttpContext.Session.SetString("JWToken", JWToken);
+            var identity = new ClaimsIdentity(claims, authScheme);
+
+            var principal = new ClaimsPrincipal(identity);
+
+             HttpContext.SignInAsync(authScheme, principal,
+                new AuthenticationProperties
+                {
+                });
+
         }
 
     }

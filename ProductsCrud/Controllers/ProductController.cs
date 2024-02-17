@@ -6,6 +6,7 @@ using ProductsCrud.Authorize;
 
 namespace ProductsCrud.Controllers
 {
+    [Authorize]
     public class ProductController : Controller
     {
         private readonly IProductService productService;
