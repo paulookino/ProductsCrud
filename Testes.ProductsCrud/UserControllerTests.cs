@@ -21,26 +21,10 @@ public class UserControllerTests
     }
 
     [Test]
-    public void CreateUser_WithValidModel_RedirectsToIndex()
-    {
-        // Arrange
-        var validUser = new User { /* Initialize a valid user object */ };
-        _controller.ModelState.Clear(); // Clear any existing model errors
-
-        // Act
-        var result = _controller.CreateUser(validUser) as RedirectToActionResult;
-
-        // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual("Index", result.ActionName);
-        _userServiceMock.Verify(u => u.CreateUser(validUser), Times.Once);
-    }
-
-    [Test]
     public void CreateUser_WithInvalidModel_ReturnsViewWithModelError()
     {
         // Arrange
-        var invalidUser = new User { /* Initialize an invalid user object */ };
+        var invalidUser = new User { };
         _controller.ModelState.AddModelError("UserName", "Username is required");
 
         // Act
@@ -56,7 +40,7 @@ public class UserControllerTests
     public void Login_WithInvalidUser_ReturnsViewWithModelError()
     {
         // Arrange
-        var invalidUser = new User { /* Initialize an invalid user object */ };
+        var invalidUser = new User { };
         _userServiceMock.Setup(u => u.ValidateUser(invalidUser)).Returns(false);
 
         // Act

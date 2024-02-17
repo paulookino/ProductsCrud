@@ -31,6 +31,9 @@ namespace Business.Services
             if (newProduct == null)
                 throw new ArgumentNullException(nameof(newProduct), "Product cannot be null.");
 
+            newProduct.CreatedAt = DateTime.Now;
+            newProduct.Active = true;
+
             await _productRepository.AddProductAsync(newProduct);
         }
 
@@ -38,6 +41,8 @@ namespace Business.Services
         {
             if (updatedProduct == null)
                 throw new ArgumentNullException(nameof(updatedProduct), "Updated product cannot be null.");
+
+            updatedProduct.UpdatedAt = DateTime.Now;
 
             return await _productRepository.UpdateProductAsync(updatedProduct);
         }

@@ -21,7 +21,7 @@ namespace Data.Repositories
             using SqlConnection connection = new SqlConnection(connectionString);
             await connection.OpenAsync();
 
-            string query = "SELECT Id, Name, Price, Stock, Active FROM Products";
+            string query = "SELECT Id, Name, Price, Stock, Active, CreatedAt, UpdatedAt FROM Products WHERE Active = 1";
             using SqlCommand command = new SqlCommand(query, connection);
             using SqlDataReader reader = await command.ExecuteReaderAsync();
 
@@ -33,7 +33,8 @@ namespace Data.Repositories
                     Name = reader.GetString(1),
                     Price = reader.GetDecimal(2),
                     Stock = reader.GetInt32(3),
-                    Active = reader.GetBoolean(4)
+                    Active = reader.GetBoolean(4),
+                    CreatedAt = reader.GetDateTime(5)
                 };
 
                 products.Add(product);
@@ -48,7 +49,7 @@ namespace Data.Repositories
             {
                 await connection.OpenAsync();
 
-                using (var command = new SqlCommand("SELECT Id, Name, Price, Stock, Active FROM Products WHERE Id = @Id", connection))
+                using (var command = new SqlCommand("SELECT Id, Name, Price, Stock, Active, CreatedAt FROM Products WHERE Id = @Id", connection))
                 {
                     command.Parameters.AddWithValue("@Id", productId);
 
@@ -62,7 +63,8 @@ namespace Data.Repositories
                                 Name = reader.GetString(reader.GetOrdinal("Name")),
                                 Price = reader.GetDecimal(reader.GetOrdinal("Price")),
                                 Stock = reader.GetInt32(reader.GetOrdinal("Stock")),
-                                Active = reader.GetBoolean(reader.GetOrdinal("Active"))
+                                Active = reader.GetBoolean(reader.GetOrdinal("Active")),
+                                CreatedAt= reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
                             };
 
                             return product;
@@ -120,7 +122,7 @@ namespace Data.Repositories
 
                 using (var command = new SqlCommand("UPDATE Products SET Active = @Active, DeletedAt = @DeletedAt WHERE Id = @Id", connection))
                 {
-                    command.Parameters.AddWithValue("@Active", true);
+                    command.Parameters.AddWithValue("@Active", false);
                     command.Parameters.AddWithValue("@DeletedAt", DateTime.Now);
                     command.Parameters.AddWithValue("@Id", productId);
 

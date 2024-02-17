@@ -1,9 +1,17 @@
 ﻿using Business.Interfaces.Services;
 using Business.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace ProductsCrud.Controllers
 {
+    [AllowAnonymous]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
@@ -24,7 +32,8 @@ namespace ProductsCrud.Controllers
             if (ModelState.IsValid)
             {
                 _userService.CreateUser(user);
-                return RedirectToAction("Index", "Home");
+                GenerateJwtToken(user.Username);
+                return RedirectToAction("Index", "Product");
             }
 
             return View(user);
@@ -40,11 +49,32 @@ namespace ProductsCrud.Controllers
         {
             if (_userService.ValidateUser(user))
             {
-                return RedirectToAction("Product", "Index");
+                GenerateJwtToken(user.Username);
+                return RedirectToAction("Index", "Product");
             }
 
             ModelState.AddModelError(string.Empty, "Invalid username or password");
             return View(user);
         }
+
+        private void GenerateJwtToken(string username)
+        {
+            var claims = new[]
+             {
+                new Claim(ClaimTypes.Name, username),
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: "issuer",
+                audience: "audience",
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(30),
+                signingCredentials: new SigningCredentials(new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("this is my custom Secret key for authentication")), SecurityAlgorithms.HmacSha256)
+                
+            );
+            var JWToken = new JwtSecurityTokenHandler().WriteToken(token);
+            //HttpContext.Session.SetString("JWToken", JWToken);
+        }
+
     }
 }

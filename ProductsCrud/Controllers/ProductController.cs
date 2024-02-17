@@ -1,20 +1,21 @@
+using Business.Interfaces.Services;
 using Business.Models;
-using Business.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProductsCrud.Authorize;
 
 namespace ProductsCrud.Controllers
 {
-    [Authorize]
     public class ProductController : Controller
     {
-        private readonly ProductService productService;
+        private readonly IProductService productService;
 
-        public ProductController(ProductService productService)
+        public ProductController(IProductService productService)
         {
             this.productService = productService;
         }
 
+        [HttpGet]
         public async Task<ActionResult> Index()
         {
             var products = await productService.GetProductsAsync();
@@ -40,7 +41,7 @@ namespace ProductsCrud.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind("Name")] Product newProduct)
+        public async Task<ActionResult> Create(Product newProduct)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +66,7 @@ namespace ProductsCrud.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind("Id,Name")] Product updatedProduct)
+        public async Task<ActionResult> Edit(Product updatedProduct)
         {
             if (ModelState.IsValid)
             {
